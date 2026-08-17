@@ -44,8 +44,9 @@ func (s *CartService) Add(userID uint, req dto.CartAddRequest) (*dto.CartItemVO,
 		return nil, err
 	} else {
 		newQty := item.Quantity + req.Quantity
-		if newQty > constants.CartMaxQuantity {
-			newQty = constants.CartMaxQuantity
+		const maxCartQuantity = 99
+		if newQty > maxCartQuantity {
+			newQty = maxCartQuantity
 		}
 		if product.Stock < newQty {
 			return nil, util.NewAppError(constants.CodeInsufficientStock, constants.MsgInsufficientStock)

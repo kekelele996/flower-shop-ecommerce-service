@@ -80,7 +80,7 @@ func JoinImages(imagesJSON string) string {
 	return strings.Join(imgs, ", ")
 }
 
-// PriceText 金额格式化。
+// PriceText 金额格式化（保留两位小数）。
 func PriceText(amount float64) string {
 	return fmt.Sprintf("¥%.2f", amount)
 }

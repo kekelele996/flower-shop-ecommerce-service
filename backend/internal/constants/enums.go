@@ -37,9 +37,6 @@ const (
 	CouponStatusExpired = "EXPIRED"
 )
 
-// CartMaxQuantity 单条购物车条目允许的最大购买数量，与 DTO 的 max=99 校验对齐。
-const CartMaxQuantity = 99
-
 // ValidOrderStatuses 合法的订单状态集合，用于 handler 校验与前端筛选。
 var ValidOrderStatuses = map[string]bool{
 	OrderStatusPendingPayment:  true,
