@@ -82,7 +82,7 @@ func JoinImages(imagesJSON string) string {
 
 // PriceText 金额格式化。
 func PriceText(amount float64) string {
-	return fmt.Sprintf("¥%.0f", amount)
+	return fmt.Sprintf("¥%.2f", amount)
 }
 
 // MoneyToCents 元转分，便于金额计算避免浮点误差。
