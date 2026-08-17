@@ -103,7 +103,7 @@ func TestProductStatusText_OnSale(t *testing.T) {
 	}
 }
 
-func TestValidProductStatuses_OnSale(t *testing.T) {
+func TestOnSaleIsValid(t *testing.T) {
 	if !constants.ValidProductStatuses[constants.ProductStatusOnSale] {
 		t.Error("ON_SALE should be a valid product status")
 	}

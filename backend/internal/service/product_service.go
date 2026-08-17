@@ -133,14 +133,14 @@ func (s *ProductService) List(q dto.ProductQuery, admin bool) ([]dto.ProductVO, 
 	return s.ToVOs(list), total, nil
 }
 
-// Detail 商品详情（用户端：下架商品不可见）。
+// Detail 商品详情。
 func (s *ProductService) Detail(id uint) (*dto.ProductVO, error) {
 	p, err := s.repo.FindByID(id)
 	if err != nil {
 		return nil, util.NewAppError(constants.CodeProductNotFound, "product not found, id="+util.UintString(id))
 	}
 	if p.Status != constants.ProductStatusOnSale {
-		return nil, util.NewAppError(constants.CodeProductNotFound, "product not available, id="+util.UintString(id))
+		return nil, util.NewAppError(constants.CodeProductNotFound, "product not on sale, id="+util.UintString(id))
 	}
 	return s.ToVO(p), nil
 }
