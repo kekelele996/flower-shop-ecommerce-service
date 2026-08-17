@@ -49,5 +49,4 @@ var ValidOrderStatuses = map[string]bool{
 // ValidProductStatuses 合法的商品状态集合。
 var ValidProductStatuses = map[string]bool{
 	ProductStatusOnSale:  true,
-	ProductStatusOffSale: true,
 }

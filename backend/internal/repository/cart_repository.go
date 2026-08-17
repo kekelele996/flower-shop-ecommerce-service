@@ -52,7 +52,7 @@ func (r *CartRepository) FindByID(id uint) (*model.CartItem, error) {
 // FindByUserID 用户购物车（复用：列表、结算汇总、下单）。
 func (r *CartRepository) FindByUserID(userID uint) ([]model.CartItem, error) {
 	var items []model.CartItem
-	if err := r.db.Preload("Product").Where("user_id = ?", userID).Order("id desc").Find(&items).Error; err != nil {
+	if err := r.db.Preload("Product").Where("user_id = ?", userID).Order("id asc").Find(&items).Error; err != nil {
 		return nil, util.WrapAppError(50001, "list cart items failed", err)
 	}
 	return items, nil
