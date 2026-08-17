@@ -11,6 +11,9 @@ const (
 	ProductStatusOnSale  = "ON_SALE"
 	ProductStatusOffSale = "OFF_SALE"
 
+	// CartMaxQuantity 单个购物车条目数量上限，与 DTO 绑定一致。
+	CartMaxQuantity = 99
+
 	OrderStatusPendingPayment  = "PENDING_PAYMENT"
 	OrderStatusPendingShipment = "PENDING_SHIPMENT"
 	OrderStatusShipped         = "SHIPPED"
@@ -49,4 +52,5 @@ var ValidOrderStatuses = map[string]bool{
 // ValidProductStatuses 合法的商品状态集合。
 var ValidProductStatuses = map[string]bool{
 	ProductStatusOnSale:  true,
+	ProductStatusOffSale: true,
 }

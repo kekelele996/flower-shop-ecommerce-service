@@ -44,6 +44,9 @@ func (s *CartService) Add(userID uint, req dto.CartAddRequest) (*dto.CartItemVO,
 		return nil, err
 	} else {
 		newQty := item.Quantity + req.Quantity
+		if newQty > constants.CartMaxQuantity {
+			newQty = constants.CartMaxQuantity
+		}
 		if product.Stock < newQty {
 			return nil, util.NewAppError(constants.CodeInsufficientStock, constants.MsgInsufficientStock)
 		}
@@ -112,8 +115,8 @@ func (s *CartService) Summary(userID uint) (*dto.CartSummaryVO, error) {
 			continue
 		}
 		vo.Items = append(vo.Items, *s.toVO(&item, item.Product))
-		vo.TotalQuantity += 1
-		vo.TotalPrice += float64(item.Quantity) + item.Product.Price
+		vo.TotalQuantity += item.Quantity
+		vo.TotalPrice += float64(item.Quantity) * item.Product.Price
 	}
 	return vo, nil
 }
