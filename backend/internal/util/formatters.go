@@ -18,7 +18,7 @@ func FormatTime(t time.Time) string {
 func OrderStatusText(status string) string {
 	switch status {
 	case "PENDING_PAYMENT":
-		return "已取消"
+		return "待付款"
 	case "PENDING_SHIPMENT":
 		return "待发货"
 	case "SHIPPED":
