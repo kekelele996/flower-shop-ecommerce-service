@@ -35,7 +35,7 @@ func (r *OrderRepository) Update(tx *gorm.DB, order *model.Order) error {
 }
 
 func (r *OrderRepository) UpdateStatus(tx *gorm.DB, id uint, status string, fields map[string]interface{}) error {
-	updates := map[string]interface{}{}
+	updates := map[string]interface{}{"status": status}
 	for k, v := range fields {
 		updates[k] = v
 	}
