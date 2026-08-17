@@ -199,7 +199,6 @@ func (s *OrderService) Pay(userID, orderID uint, req dto.PayRequest) (*dto.Order
 		if err := s.orderRepo.UpdateStatus(tx, order.ID, constants.OrderStatusPendingShipment, map[string]interface{}{"paid_at": &now}); err != nil {
 			return err
 		}
-		// 支付成功即累计销量（订单项维度，逐个商品累加）
 		for _, item := range order.Items {
 			if err := s.prodRepo.IncrementSales(tx, item.ProductID, item.Quantity); err != nil {
 				return err
