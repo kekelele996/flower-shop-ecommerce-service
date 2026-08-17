@@ -47,7 +47,7 @@ func (r *OrderRepository) UpdateStatus(tx *gorm.DB, id uint, status string, fiel
 
 func (r *OrderRepository) FindByID(tx *gorm.DB, id uint) (*model.Order, error) {
 	var order model.Order
-	err := tx.Preload("Items").First(&order, id).Error
+	err := tx.First(&order, id).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, util.ErrNotFound
 	}
@@ -72,7 +72,7 @@ func (r *OrderRepository) FindByIDForUpdate(tx *gorm.DB, id uint) (*model.Order,
 
 func (r *OrderRepository) FindByOrderNo(tx *gorm.DB, orderNo string) (*model.Order, error) {
 	var order model.Order
-	err := tx.Preload("Items").Where("order_no = ?", orderNo).First(&order).Error
+	err := tx.Where("order_no = ?", orderNo).First(&order).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, util.ErrNotFound
 	}

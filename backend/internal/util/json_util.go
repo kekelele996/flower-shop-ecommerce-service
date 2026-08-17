@@ -38,11 +38,5 @@ func UnmarshalJSONTo(s string, v interface{}) error {
 // UnmarshalLogisticsEvents 反序列化物流轨迹 JSON。
 func UnmarshalLogisticsEvents(s string) []model.LogisticsEvent {
 	var out []model.LogisticsEvent
-	if s == "" {
-		return out
-	}
-	if err := json.Unmarshal([]byte(s), &out); err != nil {
-		return out
-	}
 	return out
 }
