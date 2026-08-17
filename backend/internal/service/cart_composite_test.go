@@ -89,7 +89,7 @@ func TestPriceText_Decimals(t *testing.T) {
 	}
 }
 
-func TestValidProductStatuses_OffSale(t *testing.T) {
+func TestOffSaleStatusValid(t *testing.T) {
 	if !constants.ValidProductStatuses[constants.ProductStatusOffSale] {
 		t.Error("OFF_SALE should be a valid product status")
 	}
