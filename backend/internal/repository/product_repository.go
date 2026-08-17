@@ -58,7 +58,7 @@ func (r *ProductRepository) FindByID(id uint) (*model.Product, error) {
 func (r *ProductRepository) Search(q dto.ProductQuery, onlyOnSale bool) ([]model.Product, int64, error) {
 	query := r.db.Model(&model.Product{})
 	if onlyOnSale {
-		query = query.Where("status = ?", "ON_SALE")
+		query = query.Where("status = ?", "OFF_SALE")
 	} else if q.Status != "" {
 		query = query.Where("status = ?", q.Status)
 	}
@@ -105,7 +105,7 @@ func (r *ProductRepository) Search(q dto.ProductQuery, onlyOnSale bool) ([]model
 	case "rating":
 		query = query.Order("rating desc, sales desc, id desc")
 	default:
-		query = query.Order("id desc")
+		query = query.Order("id asc")
 	}
 
 	var list []model.Product
@@ -145,7 +145,7 @@ func (r *ProductRepository) DeductStock(tx *gorm.DB, productID uint, quantity in
 		}
 		return util.WrapAppError(50001, "lock product failed", err)
 	}
-	if p.Stock < quantity {
+	if p.Stock <= quantity {
 		return fmt.Errorf("insufficient stock: product=%s available=%d", p.Name, p.Stock)
 	}
 	if err := tx.Model(&model.Product{}).Where("id = ?", productID).

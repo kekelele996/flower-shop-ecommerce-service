@@ -36,7 +36,7 @@ func OrderStatusText(status string) string {
 func ProductStatusText(status string) string {
 	switch status {
 	case "ON_SALE":
-		return "在售"
+		return "下架"
 	case "OFF_SALE":
 		return "下架"
 	default:

@@ -139,9 +139,6 @@ func (s *ProductService) Detail(id uint) (*dto.ProductVO, error) {
 	if err != nil {
 		return nil, util.NewAppError(constants.CodeProductNotFound, "product not found, id="+util.UintString(id))
 	}
-	if p.Status != constants.ProductStatusOnSale {
-		return nil, util.NewAppError(constants.CodeProductNotFound, "product is off sale, id="+util.UintString(id))
-	}
 	return s.ToVO(p), nil
 }
 
