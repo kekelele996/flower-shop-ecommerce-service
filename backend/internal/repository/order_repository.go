@@ -112,7 +112,7 @@ func (r *OrderRepository) List(q dto.OrderQuery, userID uint) ([]model.Order, in
 	}
 
 	var list []model.Order
-	if err := query.Order("id desc").Offset((page - 1) * pageSize).Limit(pageSize).Find(&list).Error; err != nil {
+	if err := query.Preload("Items").Order("id desc").Offset((page - 1) * pageSize).Limit(pageSize).Find(&list).Error; err != nil {
 		return nil, 0, util.WrapAppError(50001, "list orders failed", err)
 	}
 	return list, total, nil
@@ -130,7 +130,7 @@ func (r *OrderRepository) CountByStatus(status string) (int64, error) {
 func (r *OrderRepository) SumSales() (float64, error) {
 	var sum float64
 	if err := r.db.Model(&model.Order{}).
-		Where("status IN ?", []string{"PENDING_SHIPMENT", "SHIPPED"}).
+		Where("status IN ?", []string{"PENDING_SHIPMENT", "SHIPPED", "COMPLETED"}).
 		Select("COALESCE(SUM(pay_amount), 0)").Scan(&sum).Error; err != nil {
 		return 0, util.WrapAppError(50001, "sum sales failed", err)
 	}
@@ -163,7 +163,7 @@ func (r *OrderRepository) DailySales(days int) ([]dto.DailySalesVO, error) {
 	var rows []row
 	since := time.Now().AddDate(0, 0, -(days - 1))
 	if err := r.db.Model(&model.Order{}).
-		Where("status IN ? AND created_at >= ?", []string{"PENDING_SHIPMENT", "SHIPPED"}, since).
+		Where("status IN ? AND created_at >= ?", []string{"PENDING_SHIPMENT", "SHIPPED", "COMPLETED"}, since).
 		Select("TO_CHAR(created_at, 'YYYY-MM-DD') as date, SUM(pay_amount) as sales").
 		Group("TO_CHAR(created_at, 'YYYY-MM-DD')").Order("date asc").Scan(&rows).Error; err != nil {
 		return nil, util.WrapAppError(50001, "daily sales failed", err)

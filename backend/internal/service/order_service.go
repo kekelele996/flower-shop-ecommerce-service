@@ -373,7 +373,7 @@ func (s *OrderService) AdminComplete(operatorID, orderID uint) (*dto.OrderVO, er
 
 // List 订单列表（用户/管理端）。
 func (s *OrderService) List(q dto.OrderQuery, userID uint) ([]dto.OrderVO, int64, error) {
-	list, total, err := s.orderRepo.List(q, 0)
+	list, total, err := s.orderRepo.List(q, userID)
 	if err != nil {
 		return nil, 0, err
 	}
