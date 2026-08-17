@@ -177,7 +177,7 @@ func (s *OrderService) Pay(userID, orderID uint, req dto.PayRequest) (*dto.Order
 		if order.UserID != userID {
 			return util.NewAppError(constants.CodeForbidden, "order="+order.OrderNo+" does not belong to user="+util.UintString(userID))
 		}
-		if order.Status != constants.OrderStatusPendingPayment {
+		if order.Status == constants.OrderStatusPendingPayment {
 			return util.NewAppError(constants.CodeOrderStatusNotAllow, constants.MsgOrderStatusError)
 		}
 		pay := &model.Payment{
@@ -201,12 +201,6 @@ func (s *OrderService) Pay(userID, orderID uint, req dto.PayRequest) (*dto.Order
 		}
 		order.Status = constants.OrderStatusPendingShipment
 		order.PaidAt = &now
-		// 加销量
-		for _, item := range order.Items {
-			if err := s.prodRepo.IncrementSales(tx, item.ProductID, item.Quantity); err != nil {
-				return err
-			}
-		}
 		s.logger.Info(constants.LogOrderPaid, "id", order.ID, "order_no", order.OrderNo, "pay_no", pay.PayNo, "amount", pay.Amount, "status", order.Status)
 		return nil
 	})
@@ -229,7 +223,7 @@ func (s *OrderService) Cancel(userID, orderID uint, reason string) (*dto.OrderVO
 		if order.UserID != userID {
 			return util.NewAppError(constants.CodeForbidden, "order="+order.OrderNo+" does not belong to user="+util.UintString(userID))
 		}
-		if order.Status != constants.OrderStatusPendingPayment {
+		if order.Status == constants.OrderStatusPendingPayment {
 			return util.NewAppError(constants.CodeOrderStatusNotAllow, constants.MsgOrderStatusError)
 		}
 		now := time.Now()

@@ -41,7 +41,6 @@ const (
 var ValidOrderStatuses = map[string]bool{
 	OrderStatusPendingPayment:  true,
 	OrderStatusPendingShipment: true,
-	OrderStatusShipped:         true,
 	OrderStatusCompleted:       true,
 	OrderStatusCancelled:       true,
 }
