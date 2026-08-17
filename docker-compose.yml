@@ -1,0 +1,117 @@
+name: flowershop
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-flowershop}-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-flowershop_db}
+      POSTGRES_USER: ${DB_USER:-flowershop_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-flowershop_pwd}
+      TZ: Asia/Shanghai
+    ports:
+      - "${DB_PORT:-5601}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-flowershop_user} -d ${DB_NAME:-flowershop_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-flowershop}-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${REDIS_PORT:-6501}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  minio:
+    image: minio/minio:latest
+    container_name: ${COMPOSE_PROJECT_NAME:-flowershop}-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "${MINIO_PORT:-47024}:9000"
+      - "${MINIO_CONSOLE_PORT:-47025}:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build:
+      context: ./backend
+    container_name: ${COMPOSE_PROJECT_NAME:-flowershop}-backend
+    restart: unless-stopped
+    environment:
+      APP_NAME: flowershop
+      APP_ENV: production
+      SERVER_PORT: "8080"
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USER: ${DB_USER:-flowershop_user}
+      DB_PASSWORD: ${DB_PASSWORD:-flowershop_pwd}
+      DB_NAME: ${DB_NAME:-flowershop_db}
+      REDIS_ADDR: redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_DB: "0"
+      JWT_SECRET: ${JWT_SECRET:-change_me_to_a_long_random_string}
+      JWT_ACCESS_EXPIRE: "86400"
+      JWT_REFRESH_EXPIRE: "604800"
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      MINIO_BUCKET: flowershop
+      MINIO_USE_SSL: "false"
+      CORS_ORIGINS: "*"
+    ports:
+      - "${BACKEND_PORT:-3101}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: ${COMPOSE_PROJECT_NAME:-flowershop}-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-8101}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  db_data:
+  redis_data:
+  minio_data:

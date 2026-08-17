@@ -1,0 +1,50 @@
+openapi: 3.0.3
+info:
+  title: flowershop 花卉B2C电商平台 API
+  version: 1.0.0
+  description: 花卉电商交易平台后端接口清单（完整清单见根目录 README.md）
+servers:
+  - url: http://localhost:3101/api/v1
+paths:
+  /auth/register:
+    post:
+      summary: 用户注册
+  /auth/login:
+    post:
+      summary: 用户登录（返回 JWT）
+  /products:
+    get:
+      summary: 商品列表/搜索（支持分类、价格区间、包邮、发货地、排序）
+  /products/{id}:
+    get:
+      summary: 商品详情
+  /cart:
+    get:
+      summary: 购物车汇总
+    post:
+      summary: 添加购物车
+  /orders:
+    post:
+      summary: 结算下单
+    get:
+      summary: 订单列表
+  /orders/{id}/pay:
+    post:
+      summary: 模拟支付宝沙箱支付
+  /orders/{id}/cancel:
+    post:
+      summary: 取消未付款订单
+  /orders/{id}/logistics:
+    get:
+      summary: 物流轨迹
+  /reviews:
+    post:
+      summary: 提交评价
+    get:
+      summary: 评价列表
+  /admin/stats:
+    get:
+      summary: 销售统计
+  /admin/audit-logs:
+    get:
+      summary: 操作审计日志
