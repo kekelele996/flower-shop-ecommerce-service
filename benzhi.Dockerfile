@@ -1,11 +1,9 @@
-# 评测用镜像：保留完整 Go 工具链，依赖构建期预下载。
+# 评测用镜像：构建并启动 backend 中的真实 HTTP 服务。
 FROM golang:1.22
 WORKDIR /app/backend
 COPY backend/go.mod backend/go.sum ./
 RUN go mod download
-COPY backend/ .
-RUN go build ./...
-CMD ["bash"]
-
-# 多架构交叉构建示例（如需交付双架构镜像）：
-# docker buildx build --platform linux/arm64,linux/amd64 -f benzhi.Dockerfile -t <image> .
+COPY backend/ ./
+RUN go build -o /usr/local/bin/server ./cmd/server
+EXPOSE 8080
+CMD ["/usr/local/bin/server"]
